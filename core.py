@@ -19,7 +19,7 @@ import requests
 # pytesseract.pytesseract.tesseract_cmd = '‪C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 x_, y_ = 0, 0
 pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-token = "118aa051d3c711a28d1531bd841f344c7acd582e5dbb8fbadda613ab19dec491e2d4a22e788727c61531f"
+token = ""
 vk = vk_api.VkApi(token=token)
 fruha_vk = '210437700'
 
