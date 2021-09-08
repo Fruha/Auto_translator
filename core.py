@@ -34,6 +34,7 @@ def get_text_from_picture(pil_image):
     return (text_en)
 
 def get_translation(text_en):
+    print("en: ", text_en)
     translator = Translator()
     text_ru = translator.translate(text_en, dest='ru').text
 

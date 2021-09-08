@@ -3,7 +3,7 @@ import os
 libs = [
     "pytesseract",
     "opencv-python",
-    "googletrans",
+    "googletrans==3.1.0a0",
     "plyer",
     "pyautogui",
     "pynput",
