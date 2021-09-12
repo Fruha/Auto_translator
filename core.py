@@ -18,20 +18,20 @@ import requests
 
 # pytesseract.pytesseract.tesseract_cmd = '‪C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
 x_, y_ = 0, 0
-pytesseract.pytesseract.tesseract_cmd = 'C:\\Program Files\\Tesseract-OCR\\tesseract.exe'
-token = ""
+pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
+token = "fe8efc5b77a2cbf7df4f8a3fc0055fae46ff7ceb9c626ed44e5188c719026ae7aaec04c81562c5bcd0cb0"
 vk = vk_api.VkApi(token=token)
 fruha_vk = '210437700'
 
 
-def get_text_from_picture(pil_image):
+def get_text_from_picture(pil_image, lang=''):
     img_rgb = cv2.cvtColor(numpy.array(pil_image), cv2.COLOR_RGB2BGR)
-
     translator = Translator()
-
-    text_en = pytesseract.image_to_string(img_rgb).replace('\n', ' ')
-
-    return (text_en)
+    if lang == '':
+        text = pytesseract.image_to_string(img_rgb).replace('\n', ' ')[:-1]
+    else:
+        text = pytesseract.image_to_string(img_rgb, lang=lang).replace('\n', ' ')[:-1]
+    return (text)
 
 def get_translation(text_en):
     print("en: ", text_en)
@@ -79,9 +79,7 @@ def get_two_points():
 def create_screenshot():
     screenshot = pyautogui.screenshot()
     points = get_two_points()
-    print(points)
     cropped_img = screenshot.crop((points[0][0], points[0][1], points[1][0], points[1][1]))
-    # cropped_img.show()
     return cropped_img
 
 def write_msg_vk(user_id, message):
@@ -91,10 +89,7 @@ def write_msg_vk(user_id, message):
         print('vk_error')
         
 def get_summary(text_title):
-    # text_title = text_title.replace('.', ' ')
-    # text_title = text_title.replace('?', '.')
     text_title = text_title.strip(' \n')
-    # text_title = ''.join(i for i in text_title if not i.isdigit())
     r = requests.post(
         "https://api.deepai.org/api/text-generator",
         data={
@@ -107,6 +102,7 @@ def get_summary(text_title):
     print("text_title: ", text_title,'1')
     print("text_summary: ", text_summary)
     return text_summary
+
 
 def translate(inp):
     print('ctrl + shift + z Detected')
@@ -128,16 +124,48 @@ def summary(inp):
     if (inp == '2'):
         write_msg_vk(fruha_vk, text_summary)
 
-if __name__ == "__main__":
+def recognize(inp):
+    print('ctrl + shift + z Detected')
+    pil_image = create_screenshot()
+
+    langs = {
+        '1': '',
+        '2': 'rus',
+        '3': 'eng'
+    }
+    text = get_text_from_picture(pil_image, langs[inp])
+    print(f'Text: {text}')
+    print()
+
+def main():
     print('Start')
-    print('1: Windows notifications')
-    print('2: Vk messages')
-    print('ctrl + shift + z to translate')
-    print('ctrl + shift + x to get summary')
+
+    print('1: Recongnizing')
+    print('2: Translate')
     inp = input()
 
-    keyboard.add_hotkey('ctrl + shift + z', translate, args=(inp))
-    keyboard.add_hotkey('ctrl + shift + x', summary, args=(inp))
-    keyboard.wait('esc')
+    if inp == '1':
+        print('1: All languages')
+        print('2: Rus')
+        print('3: Eng')
+        inp = input()
+        print('ctrl + shift + z to recognize')
+        keyboard.add_hotkey('ctrl + shift + z', recognize, args=(inp))
+        keyboard.wait('esc')
+
+    elif inp == '2':
+        print('1: Windows notifications')
+        print('2: Vk messages')
+        print('ctrl + shift + z to translate')
+        print('ctrl + shift + x to get summary')
+        inp = input()
+        keyboard.add_hotkey('ctrl + shift + z', translate, args=(inp))
+        keyboard.add_hotkey('ctrl + shift + x', summary, args=(inp))
+        keyboard.wait('esc')
+
     print('End')
+
+if __name__ == "__main__":
+    main()
+    
 
